@@ -31,18 +31,22 @@ jobs:
 
     - name: Checkout history branch
       run: |
-        git config --global user.name "jstrieb/github-stats"
-        git config --global user.email "github-stats[bot]@jstrieb.github.io"
+        git config --global user.name "advayta108"
+        git config --global user.email "advayta108@ya.ru"
         # Push generated files to the generated branch
         git pull
         git checkout generated || git checkout -b generated
 
     - name: Generate images
       run: |
+        if [ -z "${ACCESS_TOKEN}" ]; then
+          echo "::error::Secret ACCESS_TOKEN is missing. Add a classic PAT with read:user, user:email, and repo scopes at Settings → Secrets and variables → Actions."
+          exit 1
+        fi
         ./zig-out/bin/github-stats
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        EXCLUDE_REPOS: ${{ secrets.EXCLUDE_REPOS }}
+        EXCLUDE_REPOS: ${{ secrets.EXCLUDE_REPOS != '' && secrets.EXCLUDE_REPOS || 'advayta108/github-stats' }}
         EXCLUDE_LANGS: ${{ secrets.EXCLUDE_LANGS }}
         EXCLUDE_PRIVATE: "false"
         SILENT: "true"
